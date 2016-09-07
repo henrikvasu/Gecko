@@ -81,47 +81,45 @@
 	.globl  _reset
 	.type   _reset, %function
 	.thumb_func
-_reset:
-        // load CMU base address
-	ldr r1, cmu_base_addr
+_reset: 
+	//load CMU base address
+ 	ldr r1, =CMU_BASE
 
-	// load current value of HFPERCLK ENABLE
-	ldr r2, [r1, #CMU_HFPERCLKEN0]
+	//load current value of HFPERCLK ENABLE
+	ldr r2, [r1,#CMU_HFPERCLKEN0]
 
-	// set bit for GPIO clk
+	//set bit for GPIO clk
 	mov r3, #1
 	lsl r3, r3, #CMU_HFPERCLKEN0_GPIO
-	orr r2, r2, r3
+	orr r2,r2,r3
 
-	// store new value
-	str r2, [r1, #CMU_HFPERCLKEN0]
+	//store new value
+	str r2, [r1,#CMU_HFPERCLKEN0]
 
-	// set high drive strength to GPIO_PA_CTRL
-	ldr r2, 0x2
-	str r2, [#GPIO_PA_BASE, #GPIO_CTRL]
+	//set drive strength
+	mov r1, #0x02
+	ldr r2, =GPIO_PA_BASE 
+	str r1,[r2,#GPIO_CTRL]
 
-	// set pins 8-15 to output of port A
-	ldr r2, 0x55555555
-	str r2, [#GPIO_PA_BASE, #GPIO_MODEH]
+	//set pins 8-15 to output
+	mov r1, #0x55555555
+	str r1, [r2,#GPIO_MODEH]
 
-	// set pins 8-15 high, leds are active low
-	ldr r2, 0xFF00
-	str r2, [#GPIO_PA_BASE, #GPIO_DOUT]
+	//pins 8-15 are active low, set init high
+	mov r1, #0xAA00
+	str r1,[r2,#GPIO_DOUT]
 
-	// test leds 
-	ldr r2, 0xF
-	str r2, [#GPIO_PA_BASE, #GPIO_DOUT]
-	
-	// set pins 0-7 to input
-	ldr r2, 0x33333333
-	str r2, [#GPIO_PC_BASE, #GPIO_MODEL]
-	
-	// enable internal pull-up
-	ldr r2, 0xFF
-	str r2, [#GPIO_PC_BASE, #GPIO_DOUT]
-	 
-cmu_base_addr:
-	.long CMU_BASE
+	//set pin 0-7 to input
+	//ldr r1,=#0x3333333
+	//str r1,[r3,#GPIO_MODEL]
+
+	//enable internal pull-up
+	//ldr r1, =#0xff
+	//str r1,[r3,#GPIO_DOUT]
+
+//test leds
+//ldr r1,=#0x0
+//str r1,[r2,#GPIO_DOUT]
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -139,4 +137,3 @@ gpio_handler:
     .thumb_func
 dummy_handler:  
 	b .  // do nothing
-
