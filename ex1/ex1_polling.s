@@ -117,7 +117,7 @@ _reset:
 
 	//pins 8-15 are active low, set init high
 	mov r1, #0xFF00
-	str r1,[r2,#GPIO_DOUT]
+	str r1,[GPIO_PAB_reg,#GPIO_DOUT]
 
 	//load GPIO_PC_BASE address
 	ldr GPIO_PCB_reg, =GPIO_PC_BASE
