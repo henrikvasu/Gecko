@@ -192,7 +192,7 @@ main:
 	ldr r1, =SCR
 	str r0, [r1]
 	wfi
-
+	b main
 
     .thumb_func
 dummy_handler:  
