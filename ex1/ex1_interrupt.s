@@ -91,6 +91,11 @@ GPIO_BASE_reg .req r6
 	.type   _reset, %function
 	.thumb_func
 _reset: 
+	//register init
+	ldr GPIO_PAB_reg, =GPIO_PA_BASE
+	ldr GPIO_PCB_reg, =GPIO_PC_BASE
+	ldr GPIO_BASE_reg, =GPIO_BASE
+
 	//load CMU base address
  	ldr r1, =CMU_BASE
 
@@ -107,9 +112,6 @@ _reset:
 
 	//set drive strength
 	mov r1, #0x02
-
-	//load GPIO_PA_BASE address
-	ldr GPIO_PAB_reg, =GPIO_PA_BASE 
 	str r1, [GPIO_PAB_reg,#GPIO_CTRL]
 
 	//set pins 8-15 to output
@@ -120,9 +122,6 @@ _reset:
 	mov r1, #0xFF00
 	str r1, [GPIO_PAB_reg,#GPIO_DOUT]
 
-	//load GPIO_PC_BASE address
-	ldr GPIO_PCB_reg, =GPIO_PC_BASE
-	
 	//set pin 0-7 to input
 	ldr r1, =#0x33333333
 	str r1, [GPIO_PCB_reg,#GPIO_MODEL]
@@ -133,11 +132,12 @@ _reset:
   	
 	b interrupt_init
 /////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////
 //
 // Interrupt initialization
 //
 /////////////////////////////////////////////////////////////////////////////
-
 	.thumb_func
 interrupt_init:
 	//write to GPIO_EXTIPSELL
@@ -161,12 +161,13 @@ interrupt_init:
 
 	b main
 /////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////
 //
 // GPIO handler
 // The CPU will jump here when there is a GPIO interrupt
 //
 /////////////////////////////////////////////////////////////////////////////
-
 	.thumb_func
 gpio_handler:
 	//read interrupt register and clear interrupt  
@@ -177,8 +178,7 @@ gpio_handler:
 	ldr r0, [GPIO_PCB_reg,#GPIO_DIN]		
 	lsl r0,r0,#8
 	str r0, [GPIO_PAB_reg,#GPIO_DOUT]
-	b main		
-
+	bx lr		
 /////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////
@@ -192,7 +192,7 @@ main:
 	ldr r1, =SCR
 	str r0, [r1]
 	wfi
-	b main
+/////////////////////////////////////////////////////////////////////////////
 
     .thumb_func
 dummy_handler:  
