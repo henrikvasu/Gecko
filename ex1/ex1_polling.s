@@ -90,6 +90,10 @@ GPIO_PCB_reg .req r5
 	.type   _reset, %function
 	.thumb_func
 _reset: 
+	//register init
+	ldr GPIO_PAB_reg, =GPIO_PA_BASE 
+	ldr GPIO_PCB_reg, =GPIO_PC_BASE
+
 	//load CMU base address
  	ldr r1, =CMU_BASE
 
@@ -106,9 +110,6 @@ _reset:
 
 	//set drive strength
 	mov r1, #0x02
-
-	//load GPIO_PA_BASE address
-	ldr GPIO_PAB_reg, =GPIO_PA_BASE 
 	str r1,[GPIO_PAB_reg,#GPIO_CTRL]
 
 	//set pins 8-15 to output
@@ -119,18 +120,17 @@ _reset:
 	mov r1, #0xFF00
 	str r1,[GPIO_PAB_reg,#GPIO_DOUT]
 
-	//load GPIO_PC_BASE address
-	ldr GPIO_PCB_reg, =GPIO_PC_BASE
-	
 	//set pin 0-7 to input
-	ldr r1, =#0x33333333
+	mov r1, #0x33333333
 	str r1,[GPIO_PCB_reg,#GPIO_MODEL]
 
 	//enable internal pull-up
-	ldr r1, =#0xff
+	mov r1, #0xff
 	str r1,[GPIO_PCB_reg,#GPIO_DOUT]
   	
 	b main_handler
+/////////////////////////////////////////////////////////////////////////////
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // Main 
@@ -142,6 +142,8 @@ main_handler:
 	lsl r0,r0,#8
 	str r0,[GPIO_PAB_reg,#GPIO_DOUT]
  	b main_handler
+/////////////////////////////////////////////////////////////////////////////
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // GPIO handler
