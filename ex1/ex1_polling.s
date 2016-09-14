@@ -31,7 +31,7 @@
 	/* External Interrupts */
 	.long   dummy_handler
 	.long   gpio_handler            /* GPIO even handler */
-	.long   main_handler		/* Main handler */
+	.long   dummy_handler		
 	.long   dummy_handler
 	.long   dummy_handler
 	.long   dummy_handler
@@ -108,27 +108,27 @@ _reset:
 	//store new value
 	str r2, [r1,#CMU_HFPERCLKEN0]
 
-	//set drive strength
+	//set high drive strength
 	mov r1, #0x02
 	str r1,[GPIO_PAB_reg,#GPIO_CTRL]
 
-	//set pins 8-15 to output
+	//set pins 8-15 (leds) to output
 	mov r1, #0x55555555
 	str r1, [GPIO_PAB_reg,#GPIO_MODEH]
 
-	//pins 8-15 are active low, set init high
+	//leds are active low, init high
 	mov r1, #0xFF00
 	str r1,[GPIO_PAB_reg,#GPIO_DOUT]
 
-	//set pin 0-7 to input
+	//set pins 0-7 to input
 	mov r1, #0x33333333
 	str r1,[GPIO_PCB_reg,#GPIO_MODEL]
 
 	//enable internal pull-up
-	mov r1, #0xff
+	mov r1, #0xFF
 	str r1,[GPIO_PCB_reg,#GPIO_DOUT]
   	
-	b main_handler
+	b main
 /////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////
@@ -137,11 +137,12 @@ _reset:
 //
 /////////////////////////////////////////////////////////////////////////////
 
-main_handler:
-	ldr r0, [GPIO_PCB_reg,#GPIO_DIN]		
-	lsl r0,r0,#8
-	str r0,[GPIO_PAB_reg,#GPIO_DOUT]
- 	b main_handler
+main:
+	//read input pins and set leds
+	ldr r0, [GPIO_PCB_reg,#GPIO_DIN] 
+	lsl r0,r0,#8			 
+	str r0,[GPIO_PAB_reg,#GPIO_DOUT] 
+ 	b main
 /////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////
