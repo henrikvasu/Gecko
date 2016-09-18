@@ -114,7 +114,7 @@ _reset:
 	mov r1, #0x02
 	str r1, [GPIO_PAB_reg,#GPIO_CTRL]
 
-	//set pins 8-15 (leds) to output
+	//set pins 8-15 (leds) on port C to output
 	mov r1, #0x55555555
 	str r1, [GPIO_PAB_reg,#GPIO_MODEH]
 
@@ -122,7 +122,7 @@ _reset:
 	mov r1, #0xFF00
 	str r1, [GPIO_PAB_reg,#GPIO_DOUT]
 
-	//set pins 0-7 to input
+	//set pins 0-7 on port A to input
 	ldr r1, =#0x33333333
 	str r1, [GPIO_PCB_reg,#GPIO_MODEL]
 
@@ -188,6 +188,11 @@ gpio_handler:
 /////////////////////////////////////////////////////////////////////////////
 	.thumb_func
 main:
+	//turn off SRAM
+	mov r0, #0x7
+	ldr r1, =EMU_BASE
+	str r0,[r1,#EMU_MEMCTRL]		
+
 	//enable deep sleep
 	mov r0, #0x6
 	ldr r1, =SCR
