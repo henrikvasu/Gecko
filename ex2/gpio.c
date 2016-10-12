@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include <stdbool.h>
-
+#include "gpio.h"
 #include "efm32gg.h"
 
 /* function to set up GPIO mode and interrupts*/

@@ -1,8 +1,10 @@
 #include <stdint.h>
 #include <stdbool.h>
-
+#include "timer.h"
 #include "efm32gg.h"
+#include "notes.h"
 
+int loops = 0;
 /* function to setup the timer */
 void setupTimer1(uint16_t period)
 {
@@ -23,10 +25,26 @@ void setupTimer1(uint16_t period)
 	 */
 }
 
-void setupTimer2(uint16_t period)
+/* function to set up timer 2, takes number of seconds as input */
+void setupTimer2(uint16_t seconds)
 {
+	loops = 2*seconds*sampleRate/0xFFFF;
 	*CMU_HFPERCLKEN0 |= CMU2_HFPERCLKEN0_TIMER2; /* enable clock timer */
-	*TIMER2_TOP = period; /* setting period */
+	*TIMER2_TOP = 0xFFFF; /* setting period */
 	*TIMER2_IEN = 0x1; /* enable timer interrupt generation */
 	*TIMER2_CMD = 0x1; /* start the timer */
-}	
+}
+
+/* function to stop the timer */
+void stopTimer1(void)
+{	
+	*CMU_HFPERCLKEN0 &= ~CMU2_HFPERCLKEN0_TIMER1; /* disable clock timer */
+	*TIMER1_CMD = 0x0; /* stop the timer */
+}
+
+void stopTimer2(void)
+{
+	*CMU_HFPERCLKEN0 &= ~CMU2_HFPERCLKEN0_TIMER2; /* disable clock timer */
+	*TIMER2_CMD = 0x0; /* stop the timer */
+}
+

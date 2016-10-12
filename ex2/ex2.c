@@ -1,7 +1,10 @@
 #include <stdint.h>
 #include <stdbool.h>
-
 #include "efm32gg.h"
+
+#include "timer.h"
+#include "notes.h"
+#include "gpio.h"
 
 /* 
   TODO calculate the appropriate sample period for the sound wave(s) 
@@ -10,34 +13,38 @@
   registers are 16 bits.
 */
 /* The period between sound samples, in clock cycles */
-#define   SAMPLE_PERIOD1   0x7FFF
-#define   SAMPLE_PERIOD2   0x46B0
+//#define   SAMPLE_PERIOD1   0x7FFF
+//#define   SAMPLE_PERIOD2   0x46B0
 
 /* Declaration of peripheral setup functions */
-void setupGPIO();
-void setupTimer1(uint16_t period);
-void setupTimer2(uint16_t period);
-void setupDAC();
+//void setupGPIO();
+//void setupDAC();
 void setupNVIC();
+//void setupTimer1(uint16_t period);
+//void setupTimer2(uint16_t seconds);
+void playMelody(uint16_t melody);
 
 /* Your code will start executing here */
 int main(void)
 {
 	/* Call the peripheral setup functions */
 	setupGPIO();
-	setupDAC();
-	setupTimer1(SAMPLE_PERIOD1);
+	//setupDAC();
+	//setupTimer1(SAMPLE_PERIOD1);
 	//setupTimer2(SAMPLE_PERIOD2);
 
 	/* Enable interrupt handling */
 	setupNVIC();
 
+
 	/* TODO for higher energy efficiency, sleep while waiting for interrupts
 	   instead of infinite loop for busy-waiting
 	 */
+	
+	//*SCR = 0x6;
+
 	while (1) {
-		*SCR = 0x6;
-		_asm("wfi();");	
+				//__asm__("wfi");	
 		//uint16_t aell = *TIMER1_CNT;
 		//if(aell==SAMPLE_PERIOD){
 		//	if(kvedlen%32==0)
@@ -47,6 +54,12 @@ int main(void)
 		//	*GPIO_PA_DOUT = (0x00 << 8);	
 	}
 	return 0;
+}
+
+void playMelody(uint16_t melody){
+	setupDAC();
+	setupTimer1(notesFreqs[melody]);
+	setupTimer2(1);
 }
 
 void setupNVIC()
