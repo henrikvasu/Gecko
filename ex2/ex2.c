@@ -10,11 +10,13 @@
   registers are 16 bits.
 */
 /* The period between sound samples, in clock cycles */
-#define   SAMPLE_PERIOD   0
+#define   SAMPLE_PERIOD1   0x7FFF
+#define   SAMPLE_PERIOD2   0x46B0
 
 /* Declaration of peripheral setup functions */
 void setupGPIO();
-void setupTimer(uint32_t period);
+void setupTimer1(uint16_t period);
+void setupTimer2(uint16_t period);
 void setupDAC();
 void setupNVIC();
 
@@ -24,7 +26,8 @@ int main(void)
 	/* Call the peripheral setup functions */
 	setupGPIO();
 	setupDAC();
-	setupTimer(SAMPLE_PERIOD);
+	setupTimer1(SAMPLE_PERIOD1);
+	//setupTimer2(SAMPLE_PERIOD2);
 
 	/* Enable interrupt handling */
 	setupNVIC();
@@ -32,14 +35,25 @@ int main(void)
 	/* TODO for higher energy efficiency, sleep while waiting for interrupts
 	   instead of infinite loop for busy-waiting
 	 */
-	while (1) ;
-
+	while (1) {
+		*SCR = 0x6;
+		_asm("wfi();");	
+		//uint16_t aell = *TIMER1_CNT;
+		//if(aell==SAMPLE_PERIOD){
+		//	if(kvedlen%32==0)
+		//		*GPIO_PA_DOUT^= 0xFFFF;
+		//}
+		//else
+		//	*GPIO_PA_DOUT = (0x00 << 8);	
+	}
 	return 0;
 }
 
 void setupNVIC()
 {
-	
+	*ISER0 |= (1 << 12); /* enable timer1 interrupt */
+	*ISER0 |= (1 << 13); /* enable timer2 interrupt */
+	*ISER0 |= 0x802;     /* enable GPIO interrupts */	
 	/* TODO use the NVIC ISERx registers to enable handling of interrupt(s)
 	   remember two things are necessary for interrupt handling:
 	   - the peripheral must generate an interrupt signal

@@ -4,13 +4,12 @@
 #include "efm32gg.h"
 
 /* function to setup the timer */
-void setupTimer(uint16_t period)
+void setupTimer1(uint16_t period)
 {
-	*CMU_HFPERCLKEN0 |= CMU_HFPERCLKEN0_TIMER1;
-	*TIMER1_TOP = 0xAAAA;
-	*TIMER1_IEN = 0x1;
-	*ISER0 |= (1 << 12);
-	*TIMER1_CMD = 0x1;
+	*CMU_HFPERCLKEN0 |= CMU2_HFPERCLKEN0_TIMER1; /* enable clock timer */
+	*TIMER1_TOP = period; /* setting period */
+	*TIMER1_IEN = 0x1; /* enable timer interrupt generation */
+	*TIMER1_CMD = 0x1; /* start the timer */
 	
 	/*
 	   TODO enable and set up the timer
@@ -23,3 +22,11 @@ void setupTimer(uint16_t period)
 	   This will cause a timer interrupt to be generated every (period) cycles. Remember to configure the NVIC as well, otherwise the interrupt handler will not be invoked.
 	 */
 }
+
+void setupTimer2(uint16_t period)
+{
+	*CMU_HFPERCLKEN0 |= CMU2_HFPERCLKEN0_TIMER2; /* enable clock timer */
+	*TIMER2_TOP = period; /* setting period */
+	*TIMER2_IEN = 0x1; /* enable timer interrupt generation */
+	*TIMER2_CMD = 0x1; /* start the timer */
+}	
