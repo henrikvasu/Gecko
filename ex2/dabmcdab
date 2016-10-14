@@ -1,0 +1,54 @@
+#define c tone(261)
+#define d tone(294)
+#define e tone(329)
+#define f tone(349)
+#define g tone(391)
+#define gS tone(415)
+#define a tone(440)
+#define aS tone(455)
+#define b tone(466)
+#define cH tone(523)
+#define cSH tone(554)
+#define dH tone(587)
+#define dSH tone(622)
+#define eH tone(659)
+#define fH tone(698)
+#define fSH tone(740)
+#define gH tone(784)
+#define gSH tone(830)
+#define aH tone(880)
+
+tones:
+a,a,a,f,cH,a,f,cH,a
+R
+eH,eH,eH,fH,cH,gS,f,cH,a
+R
+aH,a,a,aH,gSH,gH,fSH,fH,fSH
+R
+aS,dSH,dH,cSH,cH,b,cH
+R
+f,gS,f,a,cH,a,cH,eH
+R
+aH,a,a,aH,gSH,gH,fSH,fH,fSH
+R
+aS,dSH,dH,cSH,cH,b,cH
+R
+f,gS,f,a,cH,a,cH,eH
+
+
+pauses:
+500,500,500,350,150,500,350,150,650
+150
+500,500,500,350,150,500,350,150,650
+150
+500,300,150,400,200,200,125,125,250
+250
+250,400,200,200,125,125,250
+250
+125,500,375,125,500,375,125,650
+250
+500,300,150,400,200,200,125,125,250
+250
+250,400,200,200,125,125,250
+250
+125,500,375,125,500,375,125,650
